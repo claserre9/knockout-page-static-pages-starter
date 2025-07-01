@@ -31,8 +31,8 @@ A TypeScript-powered web application starter with modern tools and frameworks. T
 - `src/index.ts` configures routes and bootstraps the application.
 
 ### Adding New Views
-1. Create a new view model extending `BaseViewModel` inside `src/components`.
-2. Provide a template via `setTemplate()` or override `template`.
+1. Run `npx ts-node scripts/create-viewmodel.ts <Name> [--test]` to generate a view model stub (and optional test).
+2. Provide a template via `setTemplate()` or override `template` if you need more than the default header.
 3. Register a route in `src/index.ts` that renders your view model.
 
 This starter provides just enough structure to grow a Knockout application without locking you in. Use the patterns in `AppViewModel` as a guide for creating additional pages.
