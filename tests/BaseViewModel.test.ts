@@ -16,4 +16,15 @@ describe('BaseViewModel', () => {
     const html = vm.renderHtml();
     expect(html).toContain('Hello');
   });
+
+  it('creates container when selector is missing', () => {
+    const selector = 'custom';
+    const vm = new TestViewModel();
+    expect(document.getElementById(selector)).toBeNull();
+    vm.render(selector);
+    const container = document.getElementById(selector);
+    expect(container).not.toBeNull();
+    expect(container?.innerHTML).toContain('Hello');
+    vm.destroy();
+  });
 });
