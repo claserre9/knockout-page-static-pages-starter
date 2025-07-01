@@ -100,12 +100,10 @@ export class BaseViewModel {
      * @param selector - The container's ID or selector where the template should be rendered.
      */
     private loadTemplate(selector: string): void {
-        const APP_CONTAINER_ID = "app";
-
         const initializeContainer = (container: HTMLElement): void => {
             if (typeof this.template === "string") {
-                container.innerHTML = this.template;
                 cleanNode(container);
+                container.innerHTML = this.template;
                 applyBindings(this, container);
                 this.onTemplateRendered();
             } else {
@@ -113,17 +111,14 @@ export class BaseViewModel {
             }
         };
 
-        let container = document.getElementById(selector);
+        let container = document.getElementById(selector) as HTMLElement | null;
         if (!container) {
-            document.body.insertAdjacentHTML("beforeend", `<div id="${APP_CONTAINER_ID}"></div>`);
-            container = document.getElementById(APP_CONTAINER_ID) as HTMLElement;
+            container = document.createElement("div");
+            container.id = selector;
+            document.body.appendChild(container);
         }
 
-        if (container) {
-            initializeContainer(container);
-        } else {
-            console.error(`Unable to create container with ID "${APP_CONTAINER_ID}".`);
-        }
+        initializeContainer(container);
     }
 
     renderHtml(): string {
