@@ -178,7 +178,7 @@ export const renderView = (ViewModel: new (context?: PageJS.Context) => BaseView
  * @param selector - The ID of the element to retrieve data from.
  * @returns The associated observable data or `null` if the element is not found.
  */
-export const getViewModelFromElement= (selector : string) => {
+export const getViewModelFromElement = (selector: string) => {
     const element = document.querySelector(selector);
     return element ? dataFor(element) : null;
 };
