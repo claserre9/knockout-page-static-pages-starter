@@ -1,5 +1,4 @@
 import {BaseViewModel} from "../core/BaseViewModel";
-import {observable, pureComputed} from "knockout";
 
 export class AppViewModel extends BaseViewModel{
 
