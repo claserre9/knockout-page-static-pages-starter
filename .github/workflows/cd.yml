@@ -1,0 +1,71 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+      - develop
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    
+    # Define environment based on branch or tag
+    environment:
+      name: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'staging' && 'staging' || 'development' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: ${{ github.ref_name == 'main' && 'production' || github.ref_name == 'staging' && 'staging' || 'development' }}
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: dist/
+          retention-days: 7
+      
+      # Deploy to GitHub Pages (for production)
+      - name: Deploy to GitHub Pages
+        if: github.ref_name == 'main'
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: gh-pages
+          clean: true
+      
+      # Example deployment to Azure (for staging)
+      - name: Deploy to Azure (Staging)
+        if: github.ref_name == 'staging'
+        run: |
+          echo "Deploying to Azure Staging environment"
+          # Add Azure deployment commands here
+          # Example: az webapp deployment source config-zip --resource-group myResourceGroup --name myApp-staging --src ./dist.zip
+      
+      # Example deployment to Netlify (for development)
+      - name: Deploy to Netlify (Development)
+        if: github.ref_name == 'develop'
+        run: |
+          echo "Deploying to Netlify Development environment"
+          # Add Netlify deployment commands here
+          # Example: npx netlify-cli deploy --dir=dist --prod
