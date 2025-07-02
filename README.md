@@ -36,3 +36,6 @@ A TypeScript-powered web application starter with modern tools and frameworks. T
 3. Register a route in `src/index.ts` that renders your view model.
 
 This starter provides just enough structure to grow a Knockout application without locking you in. Use the patterns in `AppViewModel` as a guide for creating additional pages.
+
+### Development without API
+The user service now falls back to built-in fake user data when API calls fail. This allows the user list page to function without a backend.
