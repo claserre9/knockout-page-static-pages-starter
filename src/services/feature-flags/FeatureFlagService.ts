@@ -6,7 +6,7 @@
  * if a feature is enabled.
  */
 
-import { observable, Observable } from 'knockout';
+import { observable } from 'knockout';
 
 /**
  * Interface for feature flag configuration
@@ -33,7 +33,7 @@ export interface IFeatureFlagService {
    * @param featureName - The name of the feature to observe
    * @returns An observable that will be updated when the feature flag changes
    */
-  observe(featureName: string): Observable<boolean>;
+  observe(featureName: string): KnockoutObservable<boolean>;
   
   /**
    * Override a feature flag (useful for testing or user preferences)
@@ -55,7 +55,7 @@ export interface IFeatureFlagService {
 export class FeatureFlagService implements IFeatureFlagService {
   private flags: FeatureFlags;
   private overrides: FeatureFlags = {};
-  private observables: Map<string, Observable<boolean>> = new Map();
+  private observables: Map<string, KnockoutObservable<boolean>> = new Map();
   
   /**
    * Create a new feature flag service
@@ -91,7 +91,7 @@ export class FeatureFlagService implements IFeatureFlagService {
    * @param featureName - The name of the feature to observe
    * @returns An observable that will be updated when the feature flag changes
    */
-  public observe(featureName: string): Observable<boolean> {
+  public observe(featureName: string): KnockoutObservable<boolean> {
     if (!this.observables.has(featureName)) {
       this.observables.set(featureName, observable(this.isEnabled(featureName)));
     }
