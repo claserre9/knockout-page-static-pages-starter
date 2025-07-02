@@ -1,6 +1,7 @@
-import { observable} from 'knockout';
+import { observable } from 'knockout';
 import { BaseService, IService } from '../base/BaseService';
 import { HttpClient, HttpResponse } from '../http/HttpClient';
+import { fakeUsers } from './fakeUsers';
 
 /**
  * User model interface
@@ -121,6 +122,11 @@ export class UserService extends BaseService implements IUserService {
       const response = await this.httpClient.get<User>(`${this.apiPath}/${id}`);
       return response.data;
     } catch (error) {
+      const fallback = fakeUsers.find(u => u.id === id);
+      if (fallback) {
+        console.warn(`Falling back to fake user for id ${id}`);
+        return fallback;
+      }
       return this.handleError(error, `Failed to get user with ID ${id}`);
     }
   }
@@ -133,7 +139,8 @@ export class UserService extends BaseService implements IUserService {
       const response = await this.httpClient.get<User[]>(this.apiPath);
       return response.data;
     } catch (error) {
-      return this.handleError(error, 'Failed to get users');
+      console.warn('Falling back to fake users');
+      return [...fakeUsers];
     }
   }
   
@@ -147,7 +154,13 @@ export class UserService extends BaseService implements IUserService {
       const response = await this.httpClient.post<User>(this.apiPath, user);
       return response.data;
     } catch (error) {
-      return this.handleError(error, 'Failed to create user');
+      const newUser: User = {
+        id: (fakeUsers.length + 1).toString(),
+        ...user,
+      } as User;
+      fakeUsers.push(newUser);
+      console.warn('Using fake data to create user');
+      return newUser;
     }
   }
   
@@ -169,6 +182,12 @@ export class UserService extends BaseService implements IUserService {
       
       return response.data;
     } catch (error) {
+      const index = fakeUsers.findIndex(u => u.id === id);
+      if (index !== -1) {
+        fakeUsers[index] = { ...fakeUsers[index], ...user } as User;
+        console.warn(`Using fake data to update user ${id}`);
+        return fakeUsers[index];
+      }
       return this.handleError(error, `Failed to update user with ID ${id}`);
     }
   }
@@ -188,6 +207,15 @@ export class UserService extends BaseService implements IUserService {
         this.currentUser(null);
       }
     } catch (error) {
+      const index = fakeUsers.findIndex(u => u.id === id);
+      if (index !== -1) {
+        fakeUsers.splice(index, 1);
+        console.warn(`Using fake data to delete user ${id}`);
+        if (this.currentUser()?.id === id) {
+          this.currentUser(null);
+        }
+        return;
+      }
       this.handleError(error, `Failed to delete user with ID ${id}`);
     }
   }
