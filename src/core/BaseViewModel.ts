@@ -4,8 +4,8 @@ export class BaseViewModel {
     public template: string | null = null;
     public context: PageJS.Context | undefined;
     public selector: string | null = null;
-    public isSubTemplate: boolean = false;
-    public templateName: string = "";
+    public isSubTemplate = false;
+    public templateName = "";
 
     constructor(context: PageJS.Context | undefined = undefined) {
         this.context = context;
@@ -19,7 +19,7 @@ export class BaseViewModel {
      * @param context - The application context to use during rendering.
      * @returns The instance of BaseViewModel to allow method chaining.
      */
-    public render(selector: string = "app", context: PageJS.Context | undefined = undefined): this {
+    public render(selector = "app", context: PageJS.Context | undefined = undefined): this {
         this.selector = selector;
         this.setContext(context);
         this.loadTemplate(selector);
@@ -34,7 +34,7 @@ export class BaseViewModel {
      * @param selector - The container's ID or selector where the template should be rendered.
      * @returns The instance of BaseViewModel to allow method chaining.
      */
-    public renderTemplate(template: string | null, context: PageJS.Context | undefined = undefined, selector: string = "app"): this {
+    public renderTemplate(template: string | null, context: PageJS.Context | undefined = undefined, selector = "app"): this {
         this.setTemplate(template);
         return this.render(selector, context);
     }
@@ -111,7 +111,7 @@ export class BaseViewModel {
             }
         };
 
-        let container = document.getElementById(selector) as HTMLElement | null;
+        let container = document.getElementById(selector);
         if (!container) {
             container = document.createElement("div");
             container.id = selector;
